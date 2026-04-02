@@ -7,7 +7,7 @@
  * 1. Copy this file → rename (e.g., paris.js)
  * 2. Change TRIP_ID below to a unique lowercase id (e.g., "paris")
  * 3. Fill in the data following the structure below
- * 4. Add <script src="trips/paris.js"></script> to index.html
+ * 4. Add <script src="trips/paris.js"/> to index.html
  *    (before the app.js script tag)
  * 5. Refresh the site — your trip appears automatically!
  * 
@@ -90,11 +90,22 @@ window.TRIPS["TRIP_ID"] = {
             // },
 
             // ── Meals ──
-            meals: {
-                breakfast: { name: "Place or plan",  cost: "£/€ price", link: "" },
-                lunch:     { name: "Restaurant",     cost: "£/€ price", link: "https://..." },
-                dinner:    { name: "Restaurant",     cost: "£/€ price", link: "https://..." }
-            },
+            // ── Meals (each type is an ARRAY of options) ──
+meals: {
+    breakfast: [
+        { name: "Place Name", cost: "£X-Xpp", tag: "🌟 Must Visit", desc: "Description", link: "https://..." }
+    ],
+    lunch: [
+        { name: "Top Pick", cost: "£X-Xpp", tag: "🌟 Must Visit", desc: "Description", link: "https://..." },
+        { name: "Budget Option", cost: "£X-Xpp", tag: "💰 Best Value", desc: "Description", link: "" }
+    ],
+    dessert: [
+        { name: "Sweet Spot", cost: "£X-X", tag: "🍰 Unmissable", desc: "Description", link: "" }
+    ],
+    dinner: [
+        { name: "Restaurant", cost: "£X-Xpp", tag: "🔥 Trending", desc: "Description", link: "https://..." }
+    ]
+}
 
             // ── Stops (the itinerary items) ──
             stops: [
