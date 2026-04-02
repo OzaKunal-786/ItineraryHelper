@@ -240,27 +240,83 @@
 
     // ===== RENDER MEALS =====
     function renderMeals(day) {
-        if (!day.meals) return '';
-        return `
-        <div class="info-block block-meals">
-            <div class="block-label meals"><i class="fas fa-utensils"></i> Meal Plan</div>
-            ${['breakfast', 'lunch', 'dinner'].map(m => {
-                const meal = day.meals[m];
-                if (!meal) return '';
-                return `
-                <div class="meal-row">
-                    <div class="meal-left">
-                        <span class="meal-type">${m}</span>
-                        <span class="meal-name">${meal.name}</span>
-                    </div>
-                    <div class="meal-right">
-                        <span class="meal-cost">${meal.cost}</span>
-                        ${meal.link ? `<a href="${meal.link}" target="_blank" class="meal-link"><i class="fas fa-arrow-up-right-from-square"></i></a>` : ''}
-                    </div>
-                </div>`;
-            }).join('')}
-        </div>`;
+    if (!day.meals) return '';
+    var mealTypes = ['breakfast', 'lunch', 'dessert', 'dinner'];
+    var available = mealTypes.filter(function (m) {
+        var meal = day.meals[m];
+        return meal && (Array.isArray(meal) ? meal.length > 0 : meal.name);
+    });
+    if (available.length === 0) return '';
+
+    var totalOptions = available.reduce(function (sum, m) {
+        var meal = day.meals[m];
+        return sum + (Array.isArray(meal) ? meal.length : 1);
+    }, 0);
+
+    return '<div class="info-block block-meals food-block-clickable" onclick="showFoodGuide(' + day.day + ')">' +
+        '<div class="block-label meals"><i class="fas fa-utensils"></i> Food Guide — ' + totalOptions + ' options</div>' +
+        available.map(function (m) {
+            var meal = day.meals[m];
+            var first = Array.isArray(meal) ? meal[0] : meal;
+            var extra = Array.isArray(meal) ? meal.length - 1 : 0;
+            return '<div class="meal-row">' +
+                '<div class="meal-left">' +
+                    '<span class="meal-type">' + m + '</span>' +
+                    '<span class="meal-name">' + first.name + '</span>' +
+                '</div>' +
+                '<div class="meal-right">' +
+                    '<span class="meal-cost">' + first.cost + '</span>' +
+                    (extra > 0 ? '<span class="meal-more">+' + extra + ' more</span>' : '') +
+                '</div>' +
+            '</div>';
+        }).join('') +
+        '<div class="meal-tap-hint"><i class="fas fa-hand-pointer"></i> Tap for all options & details</div>' +
+    '</div>';
+}
+window.showFoodGuide = function (dayNum) {
+    var trip = getTrip();
+    if (!trip) return;
+    var day = null;
+    for (var i = 0; i < trip.days.length; i++) {
+        if (trip.days[i].day === dayNum) { day = trip.days[i]; break; }
     }
+    if (!day || !day.meals) return;
+
+    var mealTypes = ['breakfast', 'lunch', 'dessert', 'dinner'];
+    var mealEmojis = { breakfast: '🌅', lunch: '☀️', dessert: '🍰', dinner: '🌙' };
+    var html = '<div class="food-day-title">Day ' + day.day + ': ' + day.title + '</div>';
+
+    mealTypes.forEach(function (m) {
+        var items = day.meals[m];
+        if (!items) return;
+        if (!Array.isArray(items)) items = [items];
+        if (items.length === 0) return;
+
+        html += '<div class="food-section">';
+        html += '<div class="food-section-title">' + mealEmojis[m] + ' ' + m.charAt(0).toUpperCase() + m.slice(1) + '</div>';
+
+        items.forEach(function (item) {
+            html += '<div class="food-card">';
+            html += '<div class="food-card-header">';
+            html += '<div class="food-card-info">';
+            if (item.tag) html += '<span class="food-tag">' + item.tag + '</span>';
+            html += '<div class="food-name">' + item.name + '</div>';
+            html += '<div class="food-cost">' + item.cost + '</div>';
+            html += '</div>';
+            if (item.link) {
+                html += '<a href="' + item.link + '" target="_blank" class="food-link"><i class="fas fa-arrow-up-right-from-square"></i></a>';
+            }
+            html += '</div>';
+            if (item.desc) html += '<div class="food-desc">' + item.desc + '</div>';
+            html += '</div>';
+        });
+
+        html += '</div>';
+    });
+
+    $('foodContent').innerHTML = html;
+    $('foodModal').classList.add('active');
+};
 
     // ===== RENDER STOP =====
     function renderStop(trip, day, stop, idx) {
