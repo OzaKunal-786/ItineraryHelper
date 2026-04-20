@@ -6,7 +6,7 @@ window.TRIPS.london = {
     "emoji": "🇬🇧",
     "subtitle": "The No-Pay Family Adventure",
     "dates": "Apr 25 – Apr 28, 2026",
-    "gradient": "red",
+    "gradient": "blue",
     "emergency": {
         "numbers": [
             {

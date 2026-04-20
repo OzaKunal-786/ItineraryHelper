@@ -6,7 +6,7 @@ window.TRIPS.scotland = {
     emoji: "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
     subtitle: "Highland & Skye Family Loop",
     dates: "Apr 28 – May 4, 2026",
-    gradient: "indigo",
+    gradient: "purple",
 
     emergency: {
         numbers: [
