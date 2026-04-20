@@ -55,7 +55,16 @@
                 <h2>🎫 Trip Tickets & Bookings</h2>
                 <button onclick="closeModal('ticketsModal')" class="modal-close"><i class="fas fa-xmark"></i></button>
             </div>
-            <div class="modal-body" id="ticketsContent"></div>
+            <div class="modal-body">
+                <!-- Quick Upload Section -->
+                <div class="ticket-upload-box">
+                    <p class="admin-subtext">Add new tickets to the cloud (docs/ folder):</p>
+                    <input type="file" id="quickTicketFile" class="admin-input" multiple aria-label="Upload tickets">
+                    <button onclick="uploadQuickTickets()" id="quickUploadBtn" class="btn-admin-primary" style="padding:10px; font-size:11px;"><i class="fas fa-plus"></i> Upload New Tickets</button>
+                </div>
+                <hr class="admin-hr">
+                <div id="ticketsContent"></div>
+            </div>
         </div>
     </div>
 

@@ -23,10 +23,8 @@
     }
 
     function getActiveToken() {
-        // First priority: Local session override (if hardcoded one fails)
         const backup = sessionStorage.getItem('gh_backup_token');
         if (backup) return backup;
-        // Second priority: Hardcoded parts
         return T_PARTS.join('');
     }
 
@@ -510,6 +508,12 @@
         $('ticketsModal').classList.add('active');
     };
 
+    window.uploadQuickTickets = function() {
+        const fileInput = $('quickTicketFile');
+        if (fileInput.files.length === 0) return alert("Select files first.");
+        uploadFilesToGithub('quickTicketFile', 'quickUploadBtn');
+    };
+
     // ===== GITHUB SYNC (The "Save" Button) =====
     window.syncAllChanges = function() {
         const trip = getTrip();
@@ -522,11 +526,12 @@
         githubCommit(path, fileContent, `Update itinerary: ${trip.name}`, 'syncBtn');
     };
 
-    window.uploadFilesToGithub = async function() {
-        const fileInput = $('adminFile');
+    window.uploadFilesToGithub = async function(inputId = 'adminFile', btnId = 'uploadBtn') {
+        const fileInput = $(inputId);
         if (fileInput.files.length === 0) return alert("Select files first.");
 
-        const btn = $('uploadBtn');
+        const btn = $(btnId);
+        const originalText = btn.innerHTML;
         btn.disabled = true;
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
 
@@ -546,7 +551,9 @@
 
         alert("Bulk upload complete!");
         btn.disabled = false;
-        btn.innerHTML = '<i class="fas fa-upload"></i> Upload to Cloud';
+        btn.innerHTML = originalText;
+        if (activeTrip) renderTrip();
+        if ($('ticketsModal').classList.contains('active')) showTickets();
     };
 
     async function githubCommit(path, content, message, btnId, isBase64 = false) {
