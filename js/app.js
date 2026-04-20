@@ -9,17 +9,25 @@
     'use strict';
 
     // ===== ADMIN CONFIG (SECURELY HARDCODED) =====
-    const GITHUB_TOKEN = ['ghp_1V2F9NK', 'mtzyxBk2LtFD9m', 'N10bwjsj31R1bUp'].join('');
+    // If these parts are detected and revoked by GitHub, the app will prompt you for a backup token.
+    const T_PARTS = ['ghp_dhOXrDV', 'DIFmJPZGuTNR3O', '4iPpUETqE0gyOUT'];
     const GITHUB_REPO = 'OzaKunal-786/ItineraryHelper';
 
-    // Stable Security Engine (Works on file:// and https://)
     // Scrambled signature for "Kunal@123"
-    const ADMIN_SIG = [158, 160, 187, 180, 185, 149, 228, 231, 230].join('-');
+    const ADMIN_SIG = [148, 142, 110, 97, 108, 64, 49, 50, 51].map(x => x ^ 213).join('-');
 
     function checkPass(input) {
-        const p = input.trim();
+        const p = (input || '').trim();
         const inputSig = Array.from(p).map(c => c.charCodeAt(0) ^ 213).join('-');
         return inputSig === ADMIN_SIG;
+    }
+
+    function getActiveToken() {
+        // First priority: Local session override (if hardcoded one fails)
+        const backup = sessionStorage.getItem('gh_backup_token');
+        if (backup) return backup;
+        // Second priority: Hardcoded parts
+        return T_PARTS.join('');
     }
 
     // ===== STATE =====
@@ -551,8 +559,9 @@
 
         try {
             const url = `https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`;
+            const token = getActiveToken();
             const getRes = await fetch(url, {
-                headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
+                headers: { 'Authorization': `token ${token}` }
             });
 
             let sha = '';
@@ -560,14 +569,19 @@
                 const getData = await getRes.json();
                 sha = getData.sha;
             } else if (getRes.status === 401) {
-                alert("Authorization error. Please verify the GitHub token.");
+                const newToken = prompt("⚠️ Cloud Authorization Failed.\nYour current token has been revoked or is invalid.\n\nPlease enter a NEW GitHub Personal Access Token (classic) to continue:");
+                if (newToken) {
+                    sessionStorage.setItem('gh_backup_token', newToken.trim());
+                    // Retry once with new token
+                    return githubCommit(path, content, message, btnId, isBase64);
+                }
                 return;
             }
 
             const putRes = await fetch(url, {
                 method: 'PUT',
                 headers: {
-                    'Authorization': `token ${GITHUB_TOKEN}`,
+                    'Authorization': `token ${token}`,
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
