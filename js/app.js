@@ -14,7 +14,7 @@
 
     // Stable Security Engine (Works on file:// and https://)
     // Scrambled signature for "Kunal@123"
-    const ADMIN_SIG = [158, 160, 187, 180, 185, 149, 228, 231, 230].map(x => x ^ 213).join('-');
+    const ADMIN_SIG = [158, 160, 187, 180, 185, 149, 228, 231, 230].join('-');
 
     function checkPass(input) {
         const p = input.trim();
