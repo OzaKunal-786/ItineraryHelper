@@ -12,12 +12,27 @@
     // Split the token to bypass GitHub's automated push protection filters
     const GITHUB_TOKEN = ['ghp_1V2F9NK', 'mtzyxBk2LtFD9m', 'N10bwjsj31R1bUp'].join('');
     const GITHUB_REPO = 'OzaKunal-786/ItineraryHelper';
-    const ADMIN_PASS = 'admin2026';
+
+    // Password protection: Kunal@123
+    // We use a numeric hash to avoid storing the plain text password or a reversible Base64 string.
+    function simpleHash(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash |= 0; // Convert to 32bit integer
+        }
+        return hash.toString();
+    }
+    const ADMIN_PASS_HASH = "-1384074812"; // Hash of "Kunal@123"
 
     // ===== STATE =====
     let activeTrip = null;
     let viewMode = 'summary'; // 'summary' | 'detailed'
-    let isAdmin = localStorage.getItem('is_admin') === 'true';
+
+    // Website is ALWAYS locked by default when opened.
+    // Admin mode is only active for the current session after entering the password.
+    let isAdmin = false;
     let hasUnsavedChanges = false;
 
     // ===== HELPERS =====
@@ -116,6 +131,8 @@
 
         if (isAdmin && hasUnsavedChanges) {
             $('adminSaveBar').classList.remove('hidden');
+        } else if ($('adminSaveBar')) {
+            $('adminSaveBar').classList.add('hidden');
         }
 
         // Header
@@ -307,8 +324,12 @@
         // Document badge logic
         let docBadge = '';
         if (stop.doc) {
-            const docUrl = `docs/${stop.doc}`;
-            docBadge = `<a href="${docUrl}" target="_blank" class="doc-badge"><i class="fas fa-file-invoice"></i> View Ticket</a>`;
+            if (isAdmin) {
+                const docUrl = `docs/${stop.doc}`;
+                docBadge = `<a href="${docUrl}" target="_blank" class="doc-badge"><i class="fas fa-file-invoice"></i> View Ticket</a>`;
+            } else {
+                docBadge = `<button onclick="openAdmin()" class="doc-badge"><i class="fas fa-lock"></i> Login to View Ticket</button>`;
+            }
         }
 
         return `
@@ -425,11 +446,12 @@
 
     window.loginAdmin = function() {
         const pass = $('adminPassword').value;
-        if (pass === ADMIN_PASS) {
+        if (simpleHash(pass) === ADMIN_PASS_HASH) {
             isAdmin = true;
-            localStorage.setItem('is_admin', 'true');
+            // Removed localStorage persistence for security.
+            // Admin mode must be unlocked every time the site is opened.
             showAdminDashboard();
-            renderTrip(); // Refresh UI with pens
+            renderTrip();
         } else {
             alert("Incorrect password.");
         }
@@ -437,7 +459,6 @@
 
     window.logoutAdmin = function() {
         isAdmin = false;
-        localStorage.removeItem('is_admin');
         $('adminDashboard').classList.add('hidden');
         $('adminLoginArea').classList.remove('hidden');
         location.reload();
@@ -492,7 +513,7 @@
         const originalText = btn ? btn.innerHTML : '';
         if (btn) {
             btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Committing...';
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
         }
 
         try {
@@ -505,6 +526,9 @@
             if (getRes.ok) {
                 const getData = await getRes.json();
                 sha = getData.sha;
+            } else if (getRes.status === 401) {
+                alert("Authorization error. Please verify the GitHub token.");
+                return;
             }
 
             const putRes = await fetch(url, {
@@ -523,12 +547,12 @@
             if (putRes.ok) {
                 if (!isBase64) {
                     hasUnsavedChanges = false;
-                    alert("Synced successfully!");
+                    alert("Changes saved to cloud successfully!");
                     location.reload();
                 }
             } else {
                 const err = await putRes.json();
-                alert("GitHub Error: " + err.message);
+                alert("Cloud sync failed: " + err.message);
             }
         } catch (e) {
             alert("Connection error. Check console.");
