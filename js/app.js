@@ -1,7 +1,7 @@
 /**
  * Family Travel Planner — App Engine
- * 
- * Reads trip data from window.TRIPS (populated by trip files in /trips/)
+ * Last Updated: 2026-04-20
+ *
  * Handles: routing, rendering, view modes, progress, modals, Direct Admin Editing
  */
 
@@ -9,8 +9,7 @@
     'use strict';
 
     // ===== ADMIN CONFIG (SECURELY HARDCODED) =====
-    // If these parts are detected and revoked by GitHub, the app will prompt you for a backup token.
-    const T_PARTS = ['ghp_dhOXrDV', 'DIFmJPZGuTNR3O', '4iPpUETqE0gyOUT'];
+    const GITHUB_TOKEN = ['ghp_dhOXrDV', 'DIFmJPZGuTNR3O', '4iPpUETqE0gyOUT'];
     const GITHUB_REPO = 'OzaKunal-786/ItineraryHelper';
 
     // Scrambled signature for "Kunal@123"
@@ -25,7 +24,7 @@
     function getActiveToken() {
         const backup = sessionStorage.getItem('gh_backup_token');
         if (backup) return backup;
-        return T_PARTS.join('');
+        return GITHUB_TOKEN.join('');
     }
 
     // ===== STATE =====
