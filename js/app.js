@@ -14,7 +14,7 @@
     const GITHUB_REPO = 'OzaKunal-786/ItineraryHelper';
 
     // Password protection: Kunal@123
-    // We use a numeric hash to avoid storing the plain text password or a reversible Base64 string.
+    // Numeric hash ensures the plain text password is not visible via "Inspect Element"
     function simpleHash(str) {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -24,14 +24,13 @@
         }
         return hash.toString();
     }
-    const ADMIN_PASS_HASH = "-1384074812"; // Hash of "Kunal@123"
+    const ADMIN_PASS_HASH = "-1384074812"; // This is the hash of "Kunal@123"
 
     // ===== STATE =====
     let activeTrip = null;
     let viewMode = 'summary'; // 'summary' | 'detailed'
 
     // Website is ALWAYS locked by default when opened.
-    // Admin mode is only active for the current session after entering the password.
     let isAdmin = false;
     let hasUnsavedChanges = false;
 
@@ -448,8 +447,6 @@
         const pass = $('adminPassword').value;
         if (simpleHash(pass) === ADMIN_PASS_HASH) {
             isAdmin = true;
-            // Removed localStorage persistence for security.
-            // Admin mode must be unlocked every time the site is opened.
             showAdminDashboard();
             renderTrip();
         } else {
