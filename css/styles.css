@@ -1157,6 +1157,128 @@ body {
     transform: scale(0.97);
 }
 
+/* ===== ADMIN PANEL ===== */
+.admin-modal {
+    max-width: 500px !important;
+}
+
+.admin-tip {
+    font-size: 11px;
+    color: #64748b;
+    margin-bottom: 12px;
+}
+
+.admin-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #dbeafe;
+    margin-bottom: 10px;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.admin-textarea {
+    width: 100%;
+    height: 250px;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #dbeafe;
+    margin: 10px 0;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    line-height: 1.4;
+    resize: vertical;
+}
+
+.btn-admin-primary {
+    width: 100%;
+    background: #1e3a5f;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-admin-primary:hover {
+    background: #0f172a;
+}
+
+.btn-admin-primary:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.btn-admin-outline {
+    width: 100%;
+    background: none;
+    border: 1px solid #cbd5e1;
+    color: #64748b;
+    padding: 10px;
+    border-radius: 12px;
+    margin-top: 20px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.admin-section {
+    margin-bottom: 20px;
+}
+
+.admin-section h3 {
+    font-size: 14px;
+    color: #1e3a5f;
+    margin-bottom: 4px;
+}
+
+.admin-subtext {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-bottom: 10px;
+}
+
+.admin-hr {
+    border: 0;
+    border-top: 1px solid #f1f5f9;
+    margin: 20px 0;
+}
+
+.site-footer {
+    padding: 20px;
+    text-align: center;
+}
+
+.admin-access-btn {
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    font-size: 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.admin-access-btn:hover {
+    color: #94a3b8;
+}
+
+/* Document badge in stops */
+.doc-badge {
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
 /* ===== UTILITIES ===== */
 .hidden {
     display: none !important;
@@ -1329,7 +1451,9 @@ body {
     .btn-map,
     .btn-detail,
     .meal-tap-hint,
-    .day-chevron {
+    .day-chevron,
+    .site-footer,
+    .doc-badge {
         display: none !important;
     }
 
