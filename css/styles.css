@@ -165,6 +165,10 @@ body {
     border: 1px solid #e2e8f0;
 }
 
+.download-dropdown.active .dropdown-content {
+    display: block;
+}
+
 .dropdown-content button {
     width: 100%;
     background: none;
@@ -188,10 +192,6 @@ body {
 .dropdown-content button i {
     width: 16px;
     color: #64748b;
-}
-
-.download-dropdown:hover .dropdown-content {
-    display: block;
 }
 
 /* Progress */
