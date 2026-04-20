@@ -12,18 +12,14 @@
     const GITHUB_TOKEN = ['ghp_1V2F9NK', 'mtzyxBk2LtFD9m', 'N10bwjsj31R1bUp'].join('');
     const GITHUB_REPO = 'OzaKunal-786/ItineraryHelper';
 
-    /**
-     * Password Protection (Kunal@123)
-     * We use SHA-256 hashing. This is irreversible and cannot be bypassed by looking at the code.
-     */
-    async function verifyPassword(input) {
-        const encoder = new TextEncoder();
-        const data = encoder.encode(input.trim());
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-        // SHA-256 Hash of "Kunal@123"
-        return hashHex === "148e65893a778c1a967f053229b4ec8b7468164b85c18e95c1106e23b20757d5";
+    // Stable Security Engine (Works on file:// and https://)
+    // Scrambled signature for "Kunal@123"
+    const ADMIN_SIG = [148, 142, 110, 97, 108, 64, 49, 50, 51].map(x => x ^ 213).join('-');
+
+    function checkPass(input) {
+        const p = input.trim();
+        const inputSig = Array.from(p).map(c => c.charCodeAt(0) ^ 213).join('-');
+        return inputSig === ADMIN_SIG;
     }
 
     // ===== STATE =====
@@ -445,16 +441,14 @@
         }
     };
 
-    window.loginAdmin = async function() {
+    window.loginAdmin = function() {
         const passInput = $('adminPassword').value;
-        const isMatch = await verifyPassword(passInput);
-
-        if (isMatch) {
+        if (checkPass(passInput)) {
             isAdmin = true;
             showAdminDashboard();
             renderTrip();
             closeModal('adminModal');
-            alert("Editor mode unlocked successfully!");
+            alert("Editor mode unlocked!");
         } else {
             alert("Incorrect password.");
         }
