@@ -52,15 +52,15 @@
     <div class="modal-overlay" id="ticketsModal">
         <div class="modal-card">
             <div class="modal-header">
-                <h2>🎫 Trip Tickets & Bookings</h2>
+                <h2 id="ticketsModalTitle">🎫 Trip Tickets</h2>
                 <button onclick="closeModal('ticketsModal')" class="modal-close"><i class="fas fa-xmark"></i></button>
             </div>
             <div class="modal-body">
                 <!-- Quick Upload Section -->
                 <div class="ticket-upload-box">
-                    <p class="admin-subtext">Add new tickets to the cloud (docs/ folder):</p>
+                    <p class="admin-subtext">Add new tickets for this trip:</p>
                     <input type="file" id="quickTicketFile" class="admin-input" multiple aria-label="Upload tickets">
-                    <button onclick="uploadQuickTickets()" id="quickUploadBtn" class="btn-admin-primary" style="padding:10px; font-size:11px;"><i class="fas fa-plus"></i> Upload New Tickets</button>
+                    <button onclick="uploadQuickTickets()" id="quickUploadBtn" class="btn-admin-primary" style="padding:10px; font-size:11px;"><i class="fas fa-plus"></i> Upload & Link to Trip</button>
                 </div>
                 <hr class="admin-hr">
                 <div id="ticketsContent"></div>
@@ -77,7 +77,7 @@
             </div>
             <div class="modal-body">
                 <div id="adminLoginArea">
-                    <p class="admin-tip">Enter password to enable editing and document access.</p>
+                    <p class="admin-tip">Enter password to enable editing features.</p>
                     <input type="password" id="adminPassword" placeholder="Password" class="admin-input" aria-label="Admin Password">
                     <button onclick="loginAdmin()" class="btn-admin-primary">Unlock Editor</button>
                 </div>
