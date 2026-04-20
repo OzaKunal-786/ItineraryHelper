@@ -56,14 +56,14 @@
             <div class="modal-body">
                 <div id="adminLoginArea">
                     <p class="admin-tip">Enter admin password to enable direct editing.</p>
-                    <input type="password" id="adminPassword" placeholder="Password" class="admin-input">
+                    <input type="password" id="adminPassword" placeholder="Password" class="admin-input" aria-label="Admin Password">
                     <button onclick="loginAdmin()" class="btn-admin-primary">Unlock Editor</button>
                 </div>
                 <div id="adminDashboard" class="hidden">
                     <div class="admin-section">
                         <h3>📁 Document Manager</h3>
                         <p class="admin-subtext">Upload tickets/PDFs (Bulk supported).</p>
-                        <input type="file" id="adminFile" class="admin-input" multiple>
+                        <input type="file" id="adminFile" class="admin-input" multiple aria-label="Select files to upload">
                         <button onclick="uploadFilesToGithub()" id="uploadBtn" class="btn-admin-primary"><i class="fas fa-upload"></i> Upload to GitHub</button>
                     </div>
                     <hr class="admin-hr">
