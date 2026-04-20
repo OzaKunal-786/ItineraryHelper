@@ -116,8 +116,10 @@
                     </div>
                 </div>
                 <div class="header-actions">
-                    <div class="download-dropdown">
-                        <button class="btn-download" title="Download Options"><i class="fas fa-download"></i></button>
+                    <div class="download-dropdown" id="downloadDropdown">
+                        <button class="btn-download" onclick="toggleDownloadDropdown(event)" title="Download Options">
+                            <i class="fas fa-download"></i>
+                        </button>
                         <div class="dropdown-content">
                             <button onclick="printItinerary()"><i class="fas fa-file-pdf"></i> Download PDF View</button>
                             <button onclick="downloadJsFile()"><i class="fab fa-js"></i> Download Data (.js)</button>
@@ -415,6 +417,12 @@ window.showFoodGuide = function (dayNum) {
         if (e.target.classList.contains('modal-overlay')) {
             e.target.classList.remove('active');
         }
+
+        // Close dropdown if clicking outside
+        const dd = $('downloadDropdown');
+        if (dd && !dd.contains(e.target)) {
+            dd.classList.remove('active');
+        }
     });
 
     // ===== INTERACTIONS =====
@@ -473,8 +481,14 @@ window.showFoodGuide = function (dayNum) {
     window.scrollTo(0, scrollY);
 };
 
+    window.toggleDownloadDropdown = function(e) {
+        e.stopPropagation();
+        $('downloadDropdown').classList.toggle('active');
+    };
+
     // ===== DOWNLOAD/PRINT =====
     window.printItinerary = function() {
+        $('downloadDropdown').classList.remove('active');
         // Expand all days
         document.querySelectorAll('.day-card').forEach(c => c.classList.remove('day-collapsed'));
 
@@ -490,6 +504,7 @@ window.showFoodGuide = function (dayNum) {
     };
 
     window.downloadJsFile = function() {
+        $('downloadDropdown').classList.remove('active');
         const trip = getTrip();
         if (!trip) return;
         const fileName = `${trip.id}.js`;
