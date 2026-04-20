@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Family Travel Planner 2026</title>
-    <!-- Favicon fix to prevent 404 console errors -->
+    <!-- Favicon fix to prevent console errors -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✈️</text></svg>">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -48,6 +48,17 @@
         </div>
     </div>
 
+    <!-- TICKETS MODAL -->
+    <div class="modal-overlay" id="ticketsModal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2>🎫 Trip Tickets & Bookings</h2>
+                <button onclick="closeModal('ticketsModal')" class="modal-close"><i class="fas fa-xmark"></i></button>
+            </div>
+            <div class="modal-body" id="ticketsContent"></div>
+        </div>
+    </div>
+
     <!-- ADMIN MODAL -->
     <div class="modal-overlay" id="adminModal">
         <div class="modal-card admin-modal">
@@ -57,7 +68,7 @@
             </div>
             <div class="modal-body">
                 <div id="adminLoginArea">
-                    <p class="admin-tip">Enter admin password to enable editing features.</p>
+                    <p class="admin-tip">Enter password to enable editing and document access.</p>
                     <input type="password" id="adminPassword" placeholder="Password" class="admin-input" aria-label="Admin Password">
                     <button onclick="loginAdmin()" class="btn-admin-primary">Unlock Editor</button>
                 </div>

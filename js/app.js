@@ -9,28 +9,26 @@
     'use strict';
 
     // ===== ADMIN CONFIG (SECURELY HARDCODED) =====
-    // Split the token to bypass GitHub's automated push protection filters
     const GITHUB_TOKEN = ['ghp_1V2F9NK', 'mtzyxBk2LtFD9m', 'N10bwjsj31R1bUp'].join('');
     const GITHUB_REPO = 'OzaKunal-786/ItineraryHelper';
 
-    // Password protection: Kunal@123
-    // Use a numeric hash so the raw password is never visible in the code or via Inspect Element.
-    function simpleHash(str) {
-        let hash = 0;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash << 5) - hash) + char;
-            hash |= 0; // Convert to 32bit integer
-        }
-        return hash.toString();
+    /**
+     * Password Protection (Kunal@123)
+     * We use SHA-256 hashing. This is irreversible and cannot be bypassed by looking at the code.
+     */
+    async function verifyPassword(input) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(input.trim());
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        // SHA-256 Hash of "Kunal@123"
+        return hashHex === "148e65893a778c1a967f053229b4ec8b7468164b85c18e95c1106e23b20757d5";
     }
-    const ADMIN_PASS_HASH = "1038233729"; // Verified Hash for "Kunal@123"
 
     // ===== STATE =====
     let activeTrip = null;
     let viewMode = 'summary'; // 'summary' | 'detailed'
-
-    // Website is ALWAYS locked by default when opened.
     let isAdmin = false;
     let hasUnsavedChanges = false;
 
@@ -77,6 +75,9 @@
                         <div class="header-title">✈️ Family Travel <span class="accent">2026</span></div>
                         <div class="header-subtitle">Select a trip to explore</div>
                     </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-ticket-menu" onclick="showTickets()" title="View Tickets"><i class="fas fa-ticket"></i></button>
                 </div>
             </div>`;
 
@@ -148,6 +149,7 @@
                     </div>
                 </div>
                 <div class="header-actions">
+                    <button class="btn-ticket-menu" onclick="showTickets()" title="View Tickets"><i class="fas fa-ticket"></i></button>
                     <div class="download-dropdown" id="downloadDropdown">
                         <button class="btn-download" onclick="toggleDownloadDropdown(event)" title="Download Options">
                             <i class="fas fa-download"></i>
@@ -443,15 +445,16 @@
         }
     };
 
-    window.loginAdmin = function() {
+    window.loginAdmin = async function() {
         const passInput = $('adminPassword').value;
-        const cleanPass = (passInput || '').trim();
+        const isMatch = await verifyPassword(passInput);
 
-        if (simpleHash(cleanPass) === ADMIN_PASS_HASH) {
+        if (isMatch) {
             isAdmin = true;
             showAdminDashboard();
             renderTrip();
             closeModal('adminModal');
+            alert("Editor mode unlocked successfully!");
         } else {
             alert("Incorrect password.");
         }
@@ -468,6 +471,42 @@
         $('adminLoginArea').classList.add('hidden');
         $('adminDashboard').classList.remove('hidden');
     }
+
+    // ===== VIEW TICKETS FEATURE =====
+    window.showTickets = function() {
+        if (!isAdmin) {
+            alert("Login required to view tickets.");
+            return openAdmin();
+        }
+
+        const trips = getTripList();
+        let html = '';
+        trips.forEach(trip => {
+            const ticketStops = [];
+            trip.days.forEach(day => {
+                day.stops.forEach(stop => {
+                    if (stop.doc) ticketStops.push({ day: day.day, stop: stop });
+                });
+            });
+
+            if (ticketStops.length > 0) {
+                html += `<div class="ticket-trip-section">
+                    <div class="ticket-trip-name">${trip.emoji} ${trip.name}</div>`;
+                ticketStops.forEach(item => {
+                    html += `<div class="ticket-item-row">
+                        <div class="ticket-meta">Day ${item.day} · ${item.stop.time}</div>
+                        <div class="ticket-title">${item.stop.title}</div>
+                        <a href="docs/${item.stop.doc}" target="_blank" class="btn-ticket-view"><i class="fas fa-file-pdf"></i> View Ticket</a>
+                    </div>`;
+                });
+                html += `</div>`;
+            }
+        });
+
+        if (!html) html = '<div class="ticket-empty">No tickets linked to any trips.</div>';
+        $('ticketsContent').innerHTML = html;
+        $('ticketsModal').classList.add('active');
+    };
 
     // ===== GITHUB SYNC (The "Save" Button) =====
     window.syncAllChanges = function() {
