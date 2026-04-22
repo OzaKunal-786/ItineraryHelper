@@ -38,7 +38,7 @@ window.TRIPS.test_trip = {
             "day": 1,
             "date": "May 01",
             "title": "Testing Day",
-            "route": "Home → Test --> Test feature",
+            "route": "Home → Test --> Test upload",
             "hotel": "Test Hotel",
             "meals": {
                 "breakfast": [
